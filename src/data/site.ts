@@ -9,7 +9,7 @@ export const contact = {
   email: 'hello@slowferry.trading',
 };
 
-export const enquiryEndpoint = '/enquiry';
+export const enquiryEndpoint = 'https://backoffice.slowferry.trading/enquiry';
 
 export const nav = [
   { href: '/', label: 'Catalogue' },
