@@ -1,0 +1,37 @@
+---
+import type { Category } from '../data/categories';
+
+interface Props {
+  categories: Category[];
+  /** Set this to false on the pages that are not the landing page. */
+  eager?: boolean;
+}
+
+const { categories, eager = false } = Astro.props;
+---
+
+<section class="catalogue">
+  <ul class="catalogue__list">
+    {
+      categories.map((category, index) => (
+        <li class="catalogue__item">
+          <a href={`/category/${category.slug}/`} class="catalogue__card">
+            <img
+              class="catalogue__card__image"
+              src={`/assets/categories/${category.cardImage ?? category.image}`}
+              alt={category.name}
+              loading={eager && index < 2 ? 'eager' : 'lazy'}
+              width="1200"
+              height="1200"
+            />
+            <div class="catalogue__card__text">
+              <p class="catalogue__card__title">{category.name}</p>
+              <p class="catalogue__card__species">{category.species}</p>
+              <p class="catalogue__card__summary">{category.summary}</p>
+            </div>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>

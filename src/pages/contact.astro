@@ -1,0 +1,178 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { categories } from '../data/categories';
+import { contact, enquiryEndpoint } from '../data/site';
+---
+
+<Layout title="Contact" description="Ask Slow Ferry Trading about grades, weights and shipping.">
+  <section class="contact">
+    <h1 class="contact__title">Contact</h1>
+    <p class="contact__lead">
+      Tell us the grade and the weight, and we will quote.
+    </p>
+
+    <div class="contact__grid">
+      <div class="contact__details">
+        <h2 class="section-title">Reach us</h2>
+        <dl class="contact__details__list">
+          <div class="contact__details__row">
+            <dt>Email</dt>
+            <dd><a href={`mailto:${contact.email}`} class="link">{contact.email}</a></dd>
+          </div>
+        </dl>
+
+        <h2 class="section-title">Before you write</h2>
+        <ul class="contact__checklist">
+          <li>Which grade, or what you need it for</li>
+          <li>The weight or volume</li>
+          <li>Where it is going, for the permits</li>
+          <li>Whether you want a sample first</li>
+        </ul>
+      </div>
+
+      <div class="contact__form-wrap">
+        <h2 class="section-title">Send an enquiry</h2>
+
+        <form class="form" data-enquiry-form novalidate>
+          <div data-form-fields>
+            <div class="form__row">
+              <div class="form__field">
+                <label class="form__label" for="name">Your name</label>
+                <input
+                  class="form__input"
+                  id="name"
+                  name="name"
+                  type="text"
+                  autocomplete="name"
+                  required
+                />
+              </div>
+              <div class="form__field">
+                <label class="form__label" for="company">Company name</label>
+                <input
+                  class="form__input"
+                  id="company"
+                  name="company"
+                  type="text"
+                  autocomplete="organization"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form__field">
+              <label class="form__label" for="email">Business email</label>
+              <input
+                class="form__input"
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+              />
+            </div>
+
+            <div class="form__row">
+              <div class="form__field">
+                <label class="form__label" for="grade">Grade</label>
+                <select class="form__input" id="grade" name="grade">
+                  <option value="">Not sure yet</option>
+                  {categories.map((item) => <option value={item.name}>{item.name}</option>)}
+                </select>
+              </div>
+              <div class="form__field">
+                <label class="form__label" for="quantity">Weight or volume</label>
+                <input
+                  class="form__input"
+                  id="quantity"
+                  name="quantity"
+                  type="text"
+                  placeholder="for example, 5 kg"
+                />
+              </div>
+            </div>
+
+            <div class="form__field">
+              <label class="form__label" for="message">Message</label>
+              <textarea class="form__input form__textarea" id="message" name="message" rows="5"
+              ></textarea>
+            </div>
+
+            <button type="submit" class="button" data-submit>Send enquiry</button>
+          </div>
+
+          <p class="form__status" data-form-status hidden aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script define:vars={{ endpoint: enquiryEndpoint, fallbackEmail: contact.email }}>
+  const form = document.querySelector('[data-enquiry-form]');
+  const fields = form?.querySelector('[data-form-fields]');
+  const button = form?.querySelector('[data-submit]');
+  const status = form?.querySelector('[data-form-status]');
+
+  function setStatus(kind, text) {
+    if (!status) return;
+    status.textContent = text;
+    status.className = kind ? `form__status form__status--${kind}` : 'form__status';
+    status.hidden = !text;
+  }
+
+  /*
+   * Prefill the grade from the query string. A category page links here with
+   * ?category=<name>, so the buyer does not pick the grade twice.
+   */
+  const wanted = new URLSearchParams(window.location.search).get('category');
+  if (wanted) {
+    const select = form?.querySelector('#grade');
+    const match = Array.from(select?.options ?? []).find((option) => option.value === wanted);
+    if (match) select.value = match.value;
+  }
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const data = new FormData(form);
+    const value = (key) => String(data.get(key) ?? '').trim();
+
+    const payload = {
+      name: value('name'),
+      company: value('company'),
+      email: value('email'),
+      grade: value('grade'),
+      quantity: value('quantity'),
+      message: value('message'),
+    };
+
+    if (!payload.name || !payload.company || !payload.email) {
+      setStatus('error', 'Fill in your name, your company name and your business email.');
+      return;
+    }
+
+    setStatus('', '');
+    const label = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Sending…';
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      form.reset();
+      if (fields) fields.hidden = true;
+      setStatus('success', 'Thank you. We have your enquiry and will reply by email.');
+    } catch (error) {
+      setStatus('error', `We could not send that. Write to ${fallbackEmail} instead.`);
+    } finally {
+      button.disabled = false;
+      button.textContent = label;
+    }
+  });
+</script>

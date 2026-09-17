@@ -1,0 +1,67 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CategoryList from '../../components/CategoryList.astro';
+import { categories, getOtherCategories } from '../../data/categories';
+
+export function getStaticPaths() {
+  return categories.map((category) => ({ params: { slug: category.slug } }));
+}
+
+const { slug } = Astro.params;
+const category = categories.find((item) => item.slug === slug)!;
+const others = getOtherCategories(category.slug);
+const enquiryHref = `/contact/?category=${encodeURIComponent(category.name)}`;
+---
+
+<Layout title={category.fullName} description={category.summary}>
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/" class="link">Catalogue</a>
+    <span class="breadcrumb__separator" aria-hidden="true">/</span>
+    <span>{category.name}</span>
+  </nav>
+
+  <article class="detail">
+    <img
+      class="detail__image"
+      src={`/assets/categories/${category.image}`}
+      alt={category.name}
+      width="1200"
+      height="1200"
+    />
+
+    <div class="detail__container">
+      <h1 class="detail__title">{category.fullName}</h1>
+      <p class="detail__species"><em>{category.species}</em></p>
+
+      <div class="detail__body">
+        {category.body.map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+
+      <h2 class="detail__specs__title">At a glance</h2>
+      <dl class="detail__specs">
+        {
+          category.specs.map((spec) => (
+            <div class="detail__specs__row">
+              <dt class="detail__specs__label">{spec.label}</dt>
+              <dd class="detail__specs__value">
+                {spec.italic ? <em>{spec.value}</em> : spec.value}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <a href={enquiryHref} class="button detail__button">Ask about this grade</a>
+
+      <p class="detail__note">
+        Shipped with CITES documentation, a certificate of origin and the batch papers.
+        Tell us the destination country when you write.
+      </p>
+    </div>
+  </article>
+
+  <section class="others">
+    <h2 class="others__title">Other grades</h2>
+    <CategoryList categories={others} />
+  </section>
+</Layout>
