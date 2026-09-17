@@ -35,7 +35,7 @@ export const categories: Category[] = [
     cardImage: 'indonesian-agarwood-oil-card.jpg',
     body: [
       'Water and steam distilled from Kalimantan and Irian Jaya heartwood. We keep the two origins apart and label each batch by region.',
-      'Supplied in two litre laboratory bottles, each marked with its batch weight. We decant to smaller volumes on request.',
+      'Supplied in laboratory bottles, each marked with its batch weight. We decant to smaller volumes on request.',
       'Samples available before you take a lot.',
     ],
     specs: [
@@ -56,7 +56,7 @@ export const categories: Category[] = [
     image: 'agarwood-sumatra.jpg',
     body: [
       'Aquilaria malaccensis from Sumatra. A mixed cut: flakes, splinters and small chips in one grade, light to mid brown, with thin resin veins through the paler wood.',
-      'Working material rather than a display grade. Sold by weight, packed to order.',
+      'Sold by weight, packed to order.',
       'Ask for a sample and the current cut before you order.',
     ],
     specs: [
@@ -77,7 +77,7 @@ export const categories: Category[] = [
     image: 'agarwood-chips-kalimantan-malinau.jpg',
     body: [
       'Aquilaria malaccensis from Malinau, North Kalimantan. Higher resin content than our Sumatran cut.',
-      'The darkest chips we hold. Resin runs black through the pale grain and shows plainly on a broken face. Hand cut, so length and thickness vary within the grade.',
+      'Resin runs black through the pale grain and shows plainly on a broken face. Hand cut, so length and thickness vary within the grade.',
       'Size range and resin grade change with the batch. Ask for both before you order.',
     ],
     specs: [
