@@ -1,0 +1,13 @@
+---
+import { site, contact, nav } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <nav class="footer__nav" aria-label="Footer">
+    {nav.map((item) => <a href={item.href} class="footer__nav__link">{item.label}</a>)}
+    <a href={`mailto:${contact.email}`} class="footer__nav__link">{contact.email}</a>
+  </nav>
+  <p class="footer__copyright">© {year} {site.name}</p>
+</footer>
